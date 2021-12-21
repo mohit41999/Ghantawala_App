@@ -72,6 +72,24 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: ResponsiveHelper.isDesktop(context)
+          ? SizedBox()
+          : FloatingActionButton(
+              onPressed: () => Get.toNamed(RouteHelper.getCartRoute()),
+              child: Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).primaryColor),
+                alignment: Alignment.center,
+                child: CartWidget(
+                    color: Theme.of(context).cardColor,
+                    size: 15,
+                    fromRestaurant: true),
+              ),
+            ),
       appBar: ResponsiveHelper.isDesktop(context) ? WebMenuBar() : null,
       backgroundColor: Theme.of(context).cardColor,
       body: GetBuilder<RestaurantController>(builder: (restController) {
@@ -159,22 +177,22 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
                               ),
                             ),
                             actions: [
-                              IconButton(
-                                onPressed: () =>
-                                    Get.toNamed(RouteHelper.getCartRoute()),
-                                icon: Container(
-                                  height: 50,
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Theme.of(context).primaryColor),
-                                  alignment: Alignment.center,
-                                  child: CartWidget(
-                                      color: Theme.of(context).cardColor,
-                                      size: 15,
-                                      fromRestaurant: true),
-                                ),
-                              )
+                              // IconButton(
+                              //   onPressed: () =>
+                              //       Get.toNamed(RouteHelper.getCartRoute()),
+                              //   icon: Container(
+                              //     height: 50,
+                              //     width: 50,
+                              //     decoration: BoxDecoration(
+                              //         shape: BoxShape.circle,
+                              //         color: Theme.of(context).primaryColor),
+                              //     alignment: Alignment.center,
+                              //     child: CartWidget(
+                              //         color: Theme.of(context).cardColor,
+                              //         size: 15,
+                              //         fromRestaurant: true),
+                              //   ),
+                              // )
                             ],
                           ),
                     SliverToBoxAdapter(

@@ -288,43 +288,43 @@ class HomeScreen extends StatelessWidget {
                                                         isPopular: true);
                                           })
                                         : SizedBox(),
-                                    GetBuilder<CampaignController>(
-                                        builder: (campaignController) {
-                                      return campaignController
-                                                  .itemCampaignList ==
-                                              null
-                                          ? ItemCampaignView(
-                                              campaignController:
-                                                  campaignController)
-                                          : campaignController.itemCampaignList
-                                                      .length ==
-                                                  0
-                                              ? SizedBox()
-                                              : ItemCampaignView(
-                                                  campaignController:
-                                                      campaignController);
-                                    }),
-                                    _configModel.popularFood == 1
-                                        ? GetBuilder<ProductController>(
-                                            builder: (productController) {
-                                            return productController
-                                                        .popularProductList ==
-                                                    null
-                                                ? PopularFoodView(
-                                                    productController:
-                                                        productController,
-                                                    isPopular: true)
-                                                : productController
-                                                            .popularProductList
-                                                            .length ==
-                                                        0
-                                                    ? SizedBox()
-                                                    : PopularFoodView(
-                                                        productController:
-                                                            productController,
-                                                        isPopular: true);
-                                          })
-                                        : SizedBox(),
+                                    // GetBuilder<CampaignController>(
+                                    //     builder: (campaignController) {
+                                    //   return campaignController
+                                    //               .itemCampaignList ==
+                                    //           null
+                                    //       ? ItemCampaignView(
+                                    //           campaignController:
+                                    //               campaignController)
+                                    //       : campaignController.itemCampaignList
+                                    //                   .length ==
+                                    //               0
+                                    //           ? SizedBox()
+                                    //           : ItemCampaignView(
+                                    //               campaignController:
+                                    //                   campaignController);
+                                    // }),
+                                    // _configModel.popularFood == 1
+                                    //     ? GetBuilder<ProductController>(
+                                    //         builder: (productController) {
+                                    //         return productController
+                                    //                     .popularProductList ==
+                                    //                 null
+                                    //             ? PopularFoodView(
+                                    //                 productController:
+                                    //                     productController,
+                                    //                 isPopular: true)
+                                    //             : productController
+                                    //                         .popularProductList
+                                    //                         .length ==
+                                    //                     0
+                                    //                 ? SizedBox()
+                                    //                 : PopularFoodView(
+                                    //                     productController:
+                                    //                         productController,
+                                    //                     isPopular: true);
+                                    //       })
+                                    //     : SizedBox(),
                                     _configModel.newRestaurant == 1
                                         ? GetBuilder<RestaurantController>(
                                             builder: (restController) {
@@ -374,7 +374,7 @@ class HomeScreen extends StatelessWidget {
                                           builder: (restaurantController) {
                                         return Row(children: [
                                           Expanded(
-                                              child: Text('all_restaurants'.tr,
+                                              child: Text('All Ghantawalas'.tr,
                                                   style: robotoMedium.copyWith(
                                                       fontSize: Dimensions
                                                           .fontSizeLarge))),
