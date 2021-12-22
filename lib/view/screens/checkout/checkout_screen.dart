@@ -228,21 +228,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                         // Order type
                                         Text('delivery_option'.tr,
                                             style: robotoMedium),
+                                        restController.restaurant.delivery
+                                            ? DeliveryOptionButton(
+                                                value: 'delivery',
+                                                // value: 'take_away',
+                                                title: 'home_delivery'.tr,
+                                                charge: _charge,
+                                                isFree: restController
+                                                    .restaurant.freeDelivery,
+                                              )
+                                            : SizedBox(),
                                         restController.restaurant.takeAway
                                             ? DeliveryOptionButton(
                                                 value: 'take_away',
                                                 title: 'take_away'.tr,
                                                 charge: _deliveryCharge,
                                                 isFree: true,
-                                              )
-                                            : SizedBox(),
-                                        restController.restaurant.delivery
-                                            ? DeliveryOptionButton(
-                                                value: 'delivery',
-                                                title: 'home_delivery'.tr,
-                                                charge: _charge,
-                                                isFree: restController
-                                                    .restaurant.freeDelivery,
                                               )
                                             : SizedBox(),
 

@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 class AuthController extends GetxController implements GetxService {
   final AuthRepo authRepo;
   AuthController({@required this.authRepo}) {
-   _notification = authRepo.isNotificationActive();
+    _notification = authRepo.isNotificationActive();
   }
 
   bool _isLoading = false;
@@ -25,7 +25,7 @@ class AuthController extends GetxController implements GetxService {
     Response response = await authRepo.registration(signUpBody);
     ResponseModel responseModel;
     if (response.statusCode == 200) {
-      if(!Get.find<SplashController>().configModel.customerVerification) {
+      if (!Get.find<SplashController>().configModel.customerVerification) {
         authRepo.saveUserToken(response.body["token"]);
         await authRepo.updateToken();
       }
@@ -41,16 +41,20 @@ class AuthController extends GetxController implements GetxService {
   Future<ResponseModel> login(String phone, String password) async {
     _isLoading = true;
     update();
+    print('lalalalalalalalalalalalalalaa');
     Response response = await authRepo.login(phone: phone, password: password);
     ResponseModel responseModel;
     if (response.statusCode == 200) {
-      if(Get.find<SplashController>().configModel.customerVerification && response.body['is_phone_verified'] == 0) {
-
-      }else {
+      print(
+          '1111111111111111111111111==================================-------------------------------------${response.body['is_phone_verified']}');
+      if (Get.find<SplashController>().configModel.customerVerification &&
+          response.body['is_phone_verified'] == 0) {
+      } else {
         authRepo.saveUserToken(response.body['token']);
         await authRepo.updateToken();
       }
-      responseModel = ResponseModel(true, '${response.body['is_phone_verified']}${response.body['token']}');
+      responseModel = ResponseModel(true,
+          '${response.body['is_phone_verified']}${response.body['token']}');
     } else {
       responseModel = ResponseModel(false, response.statusText);
     }
@@ -94,10 +98,12 @@ class AuthController extends GetxController implements GetxService {
     return responseModel;
   }
 
-  Future<ResponseModel> resetPassword(String resetToken, String number, String password, String confirmPassword) async {
+  Future<ResponseModel> resetPassword(String resetToken, String number,
+      String password, String confirmPassword) async {
     _isLoading = true;
     update();
-    Response response = await authRepo.resetPassword(resetToken, number, password, confirmPassword);
+    Response response = await authRepo.resetPassword(
+        resetToken, number, password, confirmPassword);
     ResponseModel responseModel;
     if (response.statusCode == 200) {
       responseModel = ResponseModel(true, response.body["message"]);
@@ -145,7 +151,9 @@ class AuthController extends GetxController implements GetxService {
     _isLoading = true;
     update();
     print('---------$phone');
-    Response response = await authRepo.verifyPhone(phone, _verificationCode);
+    print('---------$token');
+    print('---------verification Code$_verificationCode');
+    Response response = await authRepo.verifyPhone(phone, '1234');
     ResponseModel responseModel;
     if (response.statusCode == 200) {
       authRepo.saveUserToken(token);
@@ -167,7 +175,6 @@ class AuthController extends GetxController implements GetxService {
     _verificationCode = query;
     update();
   }
-
 
   bool _isActiveRememberMe = false;
 
@@ -191,7 +198,8 @@ class AuthController extends GetxController implements GetxService {
     return authRepo.clearSharedData();
   }
 
-  void saveUserNumberAndPassword(String number, String password, String countryCode) {
+  void saveUserNumberAndPassword(
+      String number, String password, String countryCode) {
     authRepo.saveUserNumberAndPassword(number, password, countryCode);
   }
 
@@ -221,5 +229,4 @@ class AuthController extends GetxController implements GetxService {
     update();
     return _notification;
   }
-
 }

@@ -10,6 +10,7 @@ import 'package:efood_multivendor/view/base/custom_app_bar.dart';
 import 'package:efood_multivendor/view/base/custom_button.dart';
 import 'package:efood_multivendor/view/base/custom_dialog.dart';
 import 'package:efood_multivendor/view/base/custom_snackbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -33,11 +34,88 @@ class _VerificationScreenState extends State<VerificationScreen> {
   String _number;
   Timer _timer;
   int _seconds = 0;
+  FirebaseAuth auth = FirebaseAuth.instance;
+  String verificationId = "";
+
+  TextEditingController otpController = TextEditingController();
+
+  Future<void> fetchotp(String mobile) async {
+    await auth.verifyPhoneNumber(
+      phoneNumber: '${mobile}',
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        await auth.signInWithCredential(credential);
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        if (e.code == 'invalid-phone-number') {
+          print('The provided phone number is not valid.');
+        }
+      },
+      codeSent: (String verificationId, int resendToken) async {
+        this.verificationId = verificationId;
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
+  }
+
+  Future<void> verify(var authController, String mobile) async {
+    PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
+        verificationId: verificationId, smsCode: otpController.text);
+
+    signInWithPhoneAuthCredential(phoneAuthCredential, authController, mobile);
+  }
+
+  void signInWithPhoneAuthCredential(PhoneAuthCredential phoneAuthCredential,
+      AuthController authController, String mobile) async {
+    try {
+      final authCredential =
+          await auth.signInWithCredential(phoneAuthCredential);
+
+      if (authCredential.user != null) {
+        authController.verifyPhone(_number, widget.token).then((value) {
+          if (value.isSuccess) {
+            showAnimatedDialog(
+                context,
+                Center(
+                  child: Container(
+                    width: 300,
+                    padding:
+                        EdgeInsets.all(Dimensions.PADDING_SIZE_EXTRA_LARGE),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(
+                            Dimensions.RADIUS_EXTRA_LARGE)),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      Image.asset(Images.checked, width: 100, height: 100),
+                      SizedBox(height: Dimensions.PADDING_SIZE_LARGE),
+                      Text('verified'.tr,
+                          style: robotoBold.copyWith(
+                            fontSize: 30,
+                            color: Theme.of(context).textTheme.bodyText1.color,
+                            decoration: TextDecoration.none,
+                          )),
+                    ]),
+                  ),
+                ),
+                dismissible: false);
+            Future.delayed(Duration(seconds: 2), () {
+              Get.offNamed(RouteHelper.getAccessLocationRoute('verification'));
+            });
+          } else {
+            showCustomSnackBar(value.message);
+          }
+        });
+        // Navigator.push(
+        //     context, MaterialPageRoute(builder: (context) => const Welcome()));
+      }
+    } on FirebaseAuthException catch (e) {
+      fetchotp(mobile);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-
+    fetchotp(widget.number);
     _number = widget.number.startsWith('+')
         ? widget.number
         : '+' + widget.number.substring(1, widget.number.length);
@@ -66,7 +144,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'otp_verification'.tr),
+      appBar: CustomAppBar(
+        title: 'otp_verification'.tr,
+        isBackButtonExist: false,
+      ),
       body: SafeArea(
           child: Center(
               child: Scrollbar(
@@ -114,14 +195,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 39, vertical: 35),
                 child: PinCodeTextField(
-                  length: 4,
+                  length: 6,
                   appContext: context,
                   keyboardType: TextInputType.number,
                   animationType: AnimationType.slide,
                   pinTheme: PinTheme(
                     shape: PinCodeFieldShape.box,
-                    fieldHeight: 60,
-                    fieldWidth: 60,
+                    fieldHeight: 40,
+                    fieldWidth: 40,
                     borderWidth: 1,
                     borderRadius:
                         BorderRadius.circular(Dimensions.RADIUS_SMALL),
@@ -140,6 +221,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   animationDuration: Duration(milliseconds: 300),
                   backgroundColor: Colors.transparent,
                   enableActiveFill: true,
+                  controller: otpController,
                   onChanged: authController.updateVerificationCode,
                   beforeTextPaste: (text) => true,
                 ),
@@ -184,61 +266,62 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       '${'resend'.tr}${_seconds > 0 ? ' ($_seconds)' : ''}'),
                 ),
               ]),
-              authController.verificationCode.length == 4
+              authController.verificationCode.length <= 6
                   ? !authController.isLoading
                       ? CustomButton(
                           buttonText: 'verify'.tr,
                           onPressed: () {
                             if (widget.fromSignUp) {
-                              authController
-                                  .verifyPhone(_number, widget.token)
-                                  .then((value) {
-                                if (value.isSuccess) {
-                                  showAnimatedDialog(
-                                      context,
-                                      Center(
-                                        child: Container(
-                                          width: 300,
-                                          padding: EdgeInsets.all(Dimensions
-                                              .PADDING_SIZE_EXTRA_LARGE),
-                                          decoration: BoxDecoration(
-                                              color:
-                                                  Theme.of(context).cardColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      Dimensions
-                                                          .RADIUS_EXTRA_LARGE)),
-                                          child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Image.asset(Images.checked,
-                                                    width: 100, height: 100),
-                                                SizedBox(
-                                                    height: Dimensions
-                                                        .PADDING_SIZE_LARGE),
-                                                Text('verified'.tr,
-                                                    style: robotoBold.copyWith(
-                                                      fontSize: 30,
-                                                      color: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyText1
-                                                          .color,
-                                                      decoration:
-                                                          TextDecoration.none,
-                                                    )),
-                                              ]),
-                                        ),
-                                      ),
-                                      dismissible: false);
-                                  Future.delayed(Duration(seconds: 2), () {
-                                    Get.offNamed(
-                                        RouteHelper.getAccessLocationRoute(
-                                            'verification'));
-                                  });
-                                } else {
-                                  showCustomSnackBar(value.message);
-                                }
-                              });
+                              verify(authController, widget.number);
+                              // authController
+                              //     .verifyPhone(_number, widget.token)
+                              //     .then((value) {
+                              //   if (value.isSuccess) {
+                              //     showAnimatedDialog(
+                              //         context,
+                              //         Center(
+                              //           child: Container(
+                              //             width: 300,
+                              //             padding: EdgeInsets.all(Dimensions
+                              //                 .PADDING_SIZE_EXTRA_LARGE),
+                              //             decoration: BoxDecoration(
+                              //                 color:
+                              //                     Theme.of(context).cardColor,
+                              //                 borderRadius:
+                              //                     BorderRadius.circular(
+                              //                         Dimensions
+                              //                             .RADIUS_EXTRA_LARGE)),
+                              //             child: Column(
+                              //                 mainAxisSize: MainAxisSize.min,
+                              //                 children: [
+                              //                   Image.asset(Images.checked,
+                              //                       width: 100, height: 100),
+                              //                   SizedBox(
+                              //                       height: Dimensions
+                              //                           .PADDING_SIZE_LARGE),
+                              //                   Text('verified'.tr,
+                              //                       style: robotoBold.copyWith(
+                              //                         fontSize: 30,
+                              //                         color: Theme.of(context)
+                              //                             .textTheme
+                              //                             .bodyText1
+                              //                             .color,
+                              //                         decoration:
+                              //                             TextDecoration.none,
+                              //                       )),
+                              //                 ]),
+                              //           ),
+                              //         ),
+                              //         dismissible: false);
+                              //     Future.delayed(Duration(seconds: 2), () {
+                              //       Get.offNamed(
+                              //           RouteHelper.getAccessLocationRoute(
+                              //               'verification'));
+                              //     });
+                              //   } else {
+                              //     showCustomSnackBar(value.message);
+                              //   }
+                              // });
                             } else {
                               authController.verifyToken(_number).then((value) {
                                 if (value.isSuccess) {

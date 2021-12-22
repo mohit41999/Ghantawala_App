@@ -27,7 +27,7 @@ class OrderController extends GetxController implements GetxService {
   ResponseModel _responseModel;
   bool _isLoading = false;
   bool _showCancelled = false;
-  String _orderType = 'take_away';
+  String _orderType;
   List<TimeSlotModel> _timeSlots;
   List<TimeSlotModel> _allTimeSlots;
   int _selectedDateSlot = 0;

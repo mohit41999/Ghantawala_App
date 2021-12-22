@@ -279,15 +279,17 @@ class _SignInScreenState extends State<SignInScreen> {
           .login(_numberWithCountryCode, _password)
           .then((status) async {
         if (status.isSuccess) {
-          print("Respones--------: $_numberWithCountryCode");
+          print("Respones--------+++: $_numberWithCountryCode");
           if (authController.isActiveRememberMe) {
-            print("Respones--------: $_numberWithCountryCode");
+            print("Respones--------***: $_numberWithCountryCode");
             authController.saveUserNumberAndPassword(
                 _phone, _password, countryDialCode);
           } else {
             authController.clearUserNumberAndPassword();
           }
           String _token = status.message.substring(1, status.message.length);
+          print(status.message +
+              'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
           if (Get.find<SplashController>().configModel.customerVerification &&
               int.parse(status.message[0]) == 0) {
             List<int> _encoded = utf8.encode(_password);
@@ -298,7 +300,7 @@ class _SignInScreenState extends State<SignInScreen> {
             Get.toNamed(RouteHelper.getAccessLocationRoute('sign-in'));
           }
         } else {
-          showCustomSnackBar(status.message);
+          showCustomSnackBar(status.message + 'ghggggkgk');
         }
         print("Response: $_numberWithCountryCode");
       });

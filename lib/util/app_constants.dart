@@ -7,6 +7,7 @@ class AppConstants {
 
   //static const String BASE_URL = 'https://demo.6amtech.com/stackfood';
   static const String BASE_URL = 'https://ghantawaladmin.curvealgo.com';
+  // static const String BASE_URL = 'https://ghantawala.notionprojects.tech';
   static const String CATEGORY_URI = '/api/v1/categories';
   static const String BANNER_URI = '/api/v1/banners';
   static const String RESTAURANT_PRODUCT_URI = '/api/v1/products/latest';

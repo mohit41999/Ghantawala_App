@@ -374,7 +374,7 @@ class HomeScreen extends StatelessWidget {
                                           builder: (restaurantController) {
                                         return Row(children: [
                                           Expanded(
-                                              child: Text('All Ghantawalas'.tr,
+                                              child: Text('all_ghantawalas'.tr,
                                                   style: robotoMedium.copyWith(
                                                       fontSize: Dimensions
                                                           .fontSizeLarge))),

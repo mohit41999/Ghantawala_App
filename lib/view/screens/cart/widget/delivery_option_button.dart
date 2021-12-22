@@ -21,26 +21,36 @@ class DeliveryOptionButton extends StatelessWidget {
     return GetBuilder<OrderController>(
       builder: (orderController) {
         return InkWell(
-          onTap: () => orderController.setOrderType(value),
-          child: Row(
-            children: [
-              Radio(
-                value: value,
-                groupValue: orderController.orderType,
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                onChanged: (String value) =>
-                    orderController.setOrderType(value),
-                // onChanged: (String value) => {},
-                activeColor: Theme.of(context).primaryColor,
-              ),
-              SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
-              Text(title, style: robotoRegular),
-              SizedBox(width: 5),
-              Text(
-                '(${(value == 'take_away' || isFree) ? 'free'.tr : PriceConverter.convertPrice(charge)})',
-                style: robotoMedium,
-              ),
-            ],
+          onTap: () => (value == 'take_away')
+              ? orderController.setOrderType(value)
+              : () {},
+          child: Container(
+            color: (value == 'delivery')
+                ? Colors.grey.withOpacity(0.5)
+                : Colors.transparent,
+            child: Row(
+              children: [
+                Radio(
+                  value: value,
+                  toggleable: false,
+                  groupValue: orderController.orderType,
+                  // groupValue: 'take_away',
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  onChanged: (String value) => (value == 'take_away')
+                      ? orderController.setOrderType(value)
+                      : () {},
+                  // onChanged: (String value) => {},
+                  activeColor: Theme.of(context).primaryColor,
+                ),
+                SizedBox(width: Dimensions.PADDING_SIZE_SMALL),
+                Text(title, style: robotoRegular),
+                SizedBox(width: 5),
+                Text(
+                  '(${(value == 'take_away' || isFree) ? 'free'.tr : PriceConverter.convertPrice(charge)})',
+                  style: robotoMedium,
+                ),
+              ],
+            ),
           ),
         );
       },
